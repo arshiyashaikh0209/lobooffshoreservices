@@ -1,0 +1,4 @@
+<div class="about-float">
+        <span class="num">20+</span>
+        <span class="lbl">Years building global workforce partnerships</span>
+      </div>
