@@ -526,9 +526,10 @@ window._reqImages = [
       <div class="form-card reveal-right">
         <h3>Send us a message</h3>
         <p class="sub">Our team responds within one business day.</p>
-        <form id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <!-- <form id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST"> -->
+          <form id="contactForm" action="https://formspree.io/f/mqergwgl" method="POST"></form>
           <input type="hidden" name="_subject" value="New Enquiry from LOBO Offshore Website">
-          <input type="hidden" name="_replyto" value="lobosrecruiment@gmail.com">
+          <input type="hidden" name="_replyto" value="">
           <input type="text" name="_gotcha" style="display:none">
           <div class="form-row">
             <div class="field"><label>Full Name</label><input type="text" name="full_name" required placeholder="Your name"></div>
@@ -539,9 +540,15 @@ window._reqImages = [
             <div class="field"><label>Phone</label><input type="tel" name="phone" placeholder="+91"></div>
           </div>
           <div class="field"><label>Message</label><textarea name="message" rows="4" placeholder="Tell us about your requirement"></textarea></div>
-          <button type="submit" class="btn btn-gold" style="width:100%;justify-content:center;">
-            Submit Enquiry <i class="fa-solid fa-paper-plane"></i>
-          </button>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-gold" style="width:100%;justify-content:center;">
+              Submit Enquiry <i class="fa-solid fa-paper-plane"></i>
+            </button>
+            <a id="whatsappEnquiry" class="btn btn-outline" href="https://wa.me/917738038017" target="_blank" rel="noopener" style="width:100%;justify-content:center;">
+              WhatsApp Us <i class="fa-brands fa-whatsapp"></i>
+            </a>
+          </div>
+          <p id="contactStatus" class="form-status" aria-live="polite"></p>
         </form>
       </div>
     </div>

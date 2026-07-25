@@ -269,7 +269,45 @@ function initContactForm() {
   if (!form) return;
 
   const btn = form.querySelector('button[type="submit"]');
+  const whatsappLink = document.getElementById('whatsappEnquiry');
+  const status = document.getElementById('contactStatus');
+  const replyTo = form.querySelector('input[name="_replyto"]');
   const origHTML = btn?.innerHTML;
+  const contactEmail = 'operation@lobooffshoreservices.com';
+  const contactPhone = '917738038017';
+
+  const getFormValues = () => {
+    const data = new FormData(form);
+    return {
+      full_name: (data.get('full_name') || '').toString().trim(),
+      company: (data.get('company') || '').toString().trim(),
+      email: (data.get('email') || '').toString().trim(),
+      phone: (data.get('phone') || '').toString().trim(),
+      message: (data.get('message') || '').toString().trim(),
+    };
+  };
+
+  const buildWhatsAppUrl = () => {
+    const values = getFormValues();
+    const lines = [
+      'New enquiry from LOBO Offshore website',
+      `Name: ${values.full_name || '-'}`,
+      `Company: ${values.company || '-'}`,
+      `Email: ${values.email || '-'}`,
+      `Phone: ${values.phone || '-'}`,
+      `Message: ${values.message || '-'}`,
+    ];
+
+    return `https://wa.me/${contactPhone}?text=${encodeURIComponent(lines.join('\n'))}`;
+  };
+
+  const syncWhatsAppLink = () => {
+    if (whatsappLink) {
+      whatsappLink.href = buildWhatsAppUrl();
+    }
+  };
+
+  syncWhatsAppLink();
 
   // Live validation styling
   form.querySelectorAll('input, select, textarea').forEach(el => {
@@ -283,7 +321,9 @@ function initContactForm() {
     el.addEventListener('input', () => { el.style.borderColor = ''; });
   });
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('input', syncWhatsAppLink);
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     // Quick validation
@@ -295,23 +335,61 @@ function initContactForm() {
 
     if (!btn) return;
 
-    // Simulate send
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending…';
+    const values = getFormValues();
+    if (replyTo) {
+      replyTo.value = values.email;
+    }
 
-    setTimeout(() => {
+    const usesPlaceholderEndpoint = form.action.includes('YOUR_FORM_ID');
+    if (usesPlaceholderEndpoint) {
+      if (status) {
+        status.textContent = 'Replace YOUR_FORM_ID with your Formspree form ID to receive emails. Opening WhatsApp now.';
+      }
+      window.open(buildWhatsAppUrl(), '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+    if (status) {
+      status.textContent = 'Sending your enquiry...';
+    }
+
+    try {
+      const response = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Form submission failed');
+      }
+
+      form.reset();
+      syncWhatsAppLink();
+
+      if (status) {
+        status.textContent = 'Message sent by email. WhatsApp is opening with the same enquiry.';
+      }
       btn.innerHTML = '<i class="fa-solid fa-check"></i> Message Sent!';
       btn.style.background = 'linear-gradient(135deg,#4caf50,#2e7d32)';
       btn.style.color = '#fff';
-      form.reset();
-
+      window.open(buildWhatsAppUrl(), '_blank', 'noopener,noreferrer');
+    } catch (error) {
+      if (status) {
+        status.textContent = `Email delivery failed. You can still contact us at ${contactEmail} or on WhatsApp.`;
+      }
+    } finally {
       setTimeout(() => {
         btn.innerHTML = origHTML;
         btn.style.background = '';
         btn.style.color = '';
         btn.disabled = false;
-      }, 3000);
-    }, 1400);
+      }, 2500);
+    }
   });
 }
 

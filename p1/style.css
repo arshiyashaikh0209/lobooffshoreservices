@@ -1427,6 +1427,24 @@ section { padding: 112px 0; position: relative; }
 
 .field textarea { resize: vertical; min-height: 110px; }
 
+.form-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  gap: 14px;
+  margin-top: 8px;
+}
+
+@media (max-width: 520px) {
+  .form-actions { grid-template-columns: 1fr; }
+}
+
+.form-status {
+  min-height: 1.2em;
+  margin-top: 12px;
+  color: var(--navy);
+  font-size: 14px;
+}
+
 /* ── 20. FOOTER ───────────────────────────────────────────── */
 footer {
   background: var(--navy-deep);
